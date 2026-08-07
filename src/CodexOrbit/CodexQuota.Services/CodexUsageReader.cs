@@ -710,11 +710,12 @@ public sealed class CodexUsageReader : IDisposable
 		{
 			return;
 		}
+		UsageSnapshot update = null;
 		lock (_scanLock)
 		{
 			UsageSnapshot previous = _lastLiveSnapshot;
 			IDictionary<string, object> mergedResponse = MergeSparseResponse(_lastLiveRateLimitsResponse, e?.RateLimitsResponse);
-			UsageSnapshot update = BuildLiveSnapshot(mergedResponse, null, previous?.PlanType, previous?.StatusMessage);
+			update = BuildLiveSnapshot(mergedResponse, null, previous?.PlanType, previous?.StatusMessage);
 			if (update != null)
 			{
 				if (previous != null)
@@ -735,17 +736,9 @@ public sealed class CodexUsageReader : IDisposable
 				_lastLiveFailure = DateTimeOffset.MinValue;
 			}
 		}
-		Timer debounceTimer = _debounceTimer;
-		if (debounceTimer == null)
+		if (update != null)
 		{
-			return;
-		}
-		try
-		{
-			debounceTimer.Change(25, -1);
-		}
-		catch (ObjectDisposedException)
-		{
+			PublishIfChanged(update);
 		}
 	}
 
@@ -863,15 +856,28 @@ public sealed class CodexUsageReader : IDisposable
 		try
 		{
 			UsageSnapshot usageSnapshot = ReadLatest();
-			if (!_disposed && !SnapshotEquals(usageSnapshot, _lastRaised))
-			{
-				_lastRaised = usageSnapshot;
-				SnapshotChanged?.Invoke(this, usageSnapshot);
-			}
+			PublishIfChanged(usageSnapshot);
 		}
 		catch (Exception exception)
 		{
 			App.LogError(exception);
+		}
+	}
+
+	private void PublishIfChanged(UsageSnapshot snapshot)
+	{
+		bool publish = false;
+		lock (_scanLock)
+		{
+			if (!_disposed && !SnapshotEquals(snapshot, _lastRaised))
+			{
+				_lastRaised = snapshot;
+				publish = true;
+			}
+		}
+		if (publish)
+		{
+			SnapshotChanged?.Invoke(this, snapshot);
 		}
 	}
 

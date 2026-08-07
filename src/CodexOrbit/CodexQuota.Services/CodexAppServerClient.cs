@@ -190,7 +190,15 @@ internal sealed class CodexAppServerClient : IDisposable
 
 	private readonly object _accountCacheLock = new object();
 
+	private readonly object _notificationLock = new object();
+
 	private readonly Dictionary<long, PendingRequest> _pending = new Dictionary<long, PendingRequest>();
+
+	private readonly Queue<IDictionary<string, object>> _notificationQueue = new Queue<IDictionary<string, object>>();
+
+	private readonly AutoResetEvent _notificationSignal = new AutoResetEvent(false);
+
+	private readonly Thread _notificationThread;
 
 	private Process _process;
 
@@ -219,6 +227,16 @@ internal sealed class CodexAppServerClient : IDisposable
 	public string LastFailure { get; private set; }
 
 	public event EventHandler<CodexRateLimitsChangedEventArgs> RateLimitsChanged;
+
+	public CodexAppServerClient()
+	{
+		_notificationThread = new Thread(NotificationLoop)
+		{
+			IsBackground = true,
+			Name = "CodexOrbit.AppServer.Notification"
+		};
+		_notificationThread.Start();
+	}
 
 	public CodexLiveResult ReadLive(int timeoutMilliseconds)
 	{
@@ -585,19 +603,7 @@ internal sealed class CodexAppServerClient : IDisposable
 					{
 						{ "result", parameters }
 					};
-					ThreadPool.QueueUserWorkItem(delegate
-					{
-						try
-						{
-							RateLimitsChanged?.Invoke(this, new CodexRateLimitsChangedEventArgs
-							{
-								RateLimitsResponse = response
-							});
-						}
-						catch
-						{
-						}
-					});
+					DispatchRateLimitsChanged(response);
 				}
 				else if (string.Equals(method, "account/updated", StringComparison.Ordinal))
 				{
@@ -616,6 +622,70 @@ internal sealed class CodexAppServerClient : IDisposable
 				if (ReferenceEquals(_process, process))
 				{
 					_initialized = false;
+				}
+			}
+		}
+	}
+
+	private void DispatchRateLimitsChanged(IDictionary<string, object> response)
+	{
+		if (_disposed || response == null)
+		{
+			return;
+		}
+		lock (_notificationLock)
+		{
+			if (_disposed)
+			{
+				return;
+			}
+			_notificationQueue.Enqueue(response);
+		}
+		try
+		{
+			_notificationSignal.Set();
+		}
+		catch (ObjectDisposedException)
+		{
+		}
+	}
+
+	private void NotificationLoop()
+	{
+		while (!_disposed)
+		{
+			try
+			{
+				_notificationSignal.WaitOne();
+			}
+			catch (ObjectDisposedException)
+			{
+				return;
+			}
+			while (!_disposed)
+			{
+				IDictionary<string, object> response = null;
+				lock (_notificationLock)
+				{
+					if (_notificationQueue.Count > 0)
+					{
+						response = _notificationQueue.Dequeue();
+					}
+				}
+				if (response == null)
+				{
+					break;
+				}
+				try
+				{
+					RateLimitsChanged?.Invoke(this, new CodexRateLimitsChangedEventArgs
+					{
+						RateLimitsResponse = response
+					});
+				}
+				catch (Exception exception)
+				{
+					_lastErrorLine = "Rate-limit notification callback failed: " + exception.GetType().Name;
 				}
 			}
 		}
@@ -1182,9 +1252,15 @@ internal sealed class CodexAppServerClient : IDisposable
 			return;
 		}
 		_disposed = true;
+		_notificationSignal.Set();
 		lock (_stateLock)
 		{
 			StopProcessNoLock();
+		}
+		if (Thread.CurrentThread != _notificationThread)
+		{
+			_notificationThread.Join(1000);
+			_notificationSignal.Dispose();
 		}
 	}
 }

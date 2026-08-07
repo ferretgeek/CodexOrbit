@@ -17,6 +17,8 @@ changes.
   the existing 30-second snapshot grace period.
 - Pin App Server input to BOM-less UTF-8 so inherited hosted-console encodings
   cannot corrupt the first JSONL message.
+- Dispatch notifications independently and publish live snapshots directly,
+  preventing a busy thread pool from delaying quota updates.
 - Validate persisted settings before applying them.
 - Make shutdown and background refresh callbacks race-safe.
 - Extend deterministic coverage for sparse notifications, local-log parsing,
