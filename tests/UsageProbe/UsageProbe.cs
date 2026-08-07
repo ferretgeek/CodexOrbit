@@ -263,6 +263,11 @@ internal static class UsageProbe
 		bool notificationQueued = false;
 		Console.Error.WriteLine("FAKE_SERVER_READY");
 		using StreamReader input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: false);
+		using StreamWriter output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+		{
+			AutoFlush = true
+		};
+		Console.SetOut(output);
 		string line;
 		while ((line = input.ReadLine()) != null)
 		{
