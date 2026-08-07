@@ -140,6 +140,12 @@ internal static class UsageProbe
 				if (!updated.Wait(5000))
 				{
 					Console.Error.WriteLine("Rate-limit notification was not applied within five seconds.");
+					FieldInfo appServerField = typeof(CodexUsageReader).GetField("_appServer", BindingFlags.Instance | BindingFlags.NonPublic);
+					object appServer = appServerField?.GetValue(reader);
+					FieldInfo errorField = appServer?.GetType().GetField("_lastErrorLine", BindingFlags.Instance | BindingFlags.NonPublic);
+					FieldInfo protocolField = appServer?.GetType().GetField("_lastProtocolLine", BindingFlags.Instance | BindingFlags.NonPublic);
+					Console.Error.WriteLine("Fake server stage: " + (errorField?.GetValue(appServer) ?? "none"));
+					Console.Error.WriteLine("Last protocol line: " + (protocolField?.GetValue(appServer) ?? "none"));
 					return 21;
 				}
 				Console.WriteLine("PASS|notification_ms=" + stopwatch.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture));
@@ -336,7 +342,9 @@ internal static class UsageProbe
 					Thread thread = new Thread((ThreadStart)delegate
 					{
 						Thread.Sleep(250);
+						Console.Error.WriteLine("FAKE_SERVER_NOTIFY|before");
 						WriteFake(json, CreateFakeRateNotification(30.0));
+						Console.Error.WriteLine("FAKE_SERVER_NOTIFY|after");
 					})
 					{
 						IsBackground = true
