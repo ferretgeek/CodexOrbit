@@ -21,7 +21,8 @@ changes.
   quota thresholds, plan mapping, reset notifications, and window placement.
 - Add bilingual project documentation, support and community files, issue and
   pull-request templates, release notes, checksums, and tag-driven releases.
-- Update official GitHub Actions to their current major versions.
+- Allow a larger fake-runtime cold-start budget on hosted CI runners.
+- Update the official GitHub Actions to their current v7 major versions.
 
 ## 3.1.2 - 2026-08-07
 

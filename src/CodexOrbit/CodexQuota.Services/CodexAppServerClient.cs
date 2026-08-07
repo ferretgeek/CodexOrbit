@@ -690,6 +690,7 @@ internal sealed class CodexAppServerClient : IDisposable
 		string overridePath = Environment.GetEnvironmentVariable("CODEX_ORBIT_CODEX_PATH");
 		if (!string.IsNullOrWhiteSpace(overridePath))
 		{
+			int overrideStartIndex = candidates.Count;
 			if (overridePath.EndsWith(".cmd", StringComparison.OrdinalIgnoreCase) || overridePath.EndsWith(".bat", StringComparison.OrdinalIgnoreCase))
 			{
 				addCommand(overridePath, "自定义 Codex CLI");
@@ -697,6 +698,10 @@ internal sealed class CodexAppServerClient : IDisposable
 			else
 			{
 				addNative(overridePath, "自定义 Codex CLI");
+			}
+			for (int i = overrideStartIndex; i < candidates.Count; i++)
+			{
+				candidates[i].StartupTimeoutMilliseconds = 8000;
 			}
 		}
 		if (string.Equals(onlyRuntime, "override", StringComparison.Ordinal))
