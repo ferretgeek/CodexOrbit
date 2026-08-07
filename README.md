@@ -44,7 +44,7 @@ Codex 的登录方式与 `app-server` 协议可参考
 [Codex App Server 文档](https://learn.chatgpt.com/docs/app-server)，额度规则见
 [Codex 定价与用量文档](https://learn.chatgpt.com/docs/pricing)。
 
-上游 App Server 仍在演进。Codex Orbit v3.2.0 已按 `codex-cli 0.147.0`
+上游 App Server 仍在演进。Codex Orbit v3.2.1 已按 `codex-cli 0.147.0`
 生成的当前协议 Schema 验证，并保留本地日志兜底以应对临时兼容问题。
 
 ## 安装
@@ -57,8 +57,17 @@ Codex 的登录方式与 `app-server` 协议可参考
 4. 将程序放入固定目录后双击运行。
 5. 需要随系统启动时，在托盘菜单中启用“开机自启”。
 
+从 v3.2.1 起，GitHub Release 还会生成构建来源证明。已安装 GitHub CLI 时可
+进一步验证下载文件确由本仓库的 GitHub Actions 生成：
+
+```powershell
+gh attestation verify .\CodexOrbit-<版本>-windows-x64.exe `
+  --repo ferretgeek/CodexOrbit
+```
+
 移动 EXE 后需要重新启用一次开机自启。若 Windows SmartScreen 提示未知发布者，
-请先核对 Release 的 SHA-256；社区构建默认没有商业代码签名证书。
+请先核对 SHA-256 和来源证明；社区构建默认没有商业代码签名证书，来源证明不等同
+于 Authenticode 签名，也不会自动消除 SmartScreen 提示。
 
 ### 从源码构建
 
@@ -120,19 +129,18 @@ Token 刷新和远程请求均由 Codex 自己处理，Codex Orbit 不读取
 `rate_limits` 记录。它不会保存或上传对话内容。详细范围见
 [PRIVACY.md](PRIVACY.md)。
 
-本地只保存界面偏好：
+本地目录可能包含以下内容：
 
 ```text
-%LOCALAPPDATA%\CodexQuota\settings.json
+%LOCALAPPDATA%\CodexQuota\
+├─ settings.json   界面与提醒偏好
+├─ runtime\         从已安装 Windows App 准备的运行时缓存
+└─ error.log        仅发生未处理错误时创建的本地诊断日志
 ```
 
-从 Windows 安装包提取的本机运行时缓存位于：
-
-```text
-%LOCALAPPDATA%\CodexQuota\runtime
-```
-
-该缓存不会包含在源码仓库或发布压缩包中。
+诊断日志不会上传，单条内容会限制长度，并会脱敏用户目录和常见 Token 格式；
+它仍可能包含异常上下文，分享前应人工检查。以上本地内容都不会包含在源码仓库或
+发布压缩包中。
 
 ## 故障排查
 
@@ -162,6 +170,18 @@ codex --version
 15 秒，避免反复启动不可用的运行时。也可以从托盘菜单手动强制刷新。若实时服务
 不可用，界面会明确标注“非实时”并显示最近的本地快照。
 
+### 查看本地诊断日志
+
+程序遇到未处理错误时可能写入：
+
+```text
+%LOCALAPPDATA%\CodexQuota\error.log
+```
+
+日志只保存在本机，不会自动上传；其大小会受到限制，并会脱敏常见路径和密钥格式。
+如需提交 Issue，请先人工检查并删除提示词、账户信息和其他仍可能识别个人身份的
+上下文，不要直接附上未经检查的完整日志。
+
 ### 重置所有界面设置
 
 退出程序后删除：
@@ -185,8 +205,9 @@ codex --version
 .\scripts\package.ps1
 ```
 
-确定性测试会启动本地假 `app-server`，覆盖稀疏通知合并、本地日志解析、额度
-阈值、套餐映射、重置提醒和窗口定位，不访问真实账户。
+确定性测试会启动本地假 `app-server`，覆盖稀疏通知合并、账户响应最小化、
+诊断日志脱敏、本地会话日志解析、额度阈值、套餐映射、重置提醒和窗口定位，
+不访问真实账户。
 
 ## 文档
 

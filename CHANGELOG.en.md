@@ -6,6 +6,28 @@ Codex Orbit follows Semantic Versioning where practical. Compatibility code
 may need to change when the upstream experimental Codex App Server protocol
 changes.
 
+## 3.2.1 - 2026-08-08
+
+- Immediately discard email and unrelated account fields after deserializing
+  `account/read`; retain only the authentication requirement, account type, and
+  plan type in cache.
+- Redact user paths and common secret formats in local `error.log` entries,
+  bound entry length, rotate the file, and document its scope in both privacy
+  and support guides.
+- Extend current-schema coverage for Business and Enterprise plan identifiers,
+  account-cache minimization, and diagnostic redaction.
+- Run Build only for pushes and pull requests targeting `main`, eliminating
+  duplicate push-plus-PR runs and their redundant failure notifications.
+- Pin GitHub Actions to complete commit SHAs and constrain CI to Windows Server
+  2022 with the Visual Studio 2022 toolchain family.
+- Add C# CodeQL `security-extended` analysis and GitHub build-provenance
+  attestations for Release assets.
+- Build ZIPs with stable entry ordering and commit-derived timestamps for
+  stable packaging under the same source, content, and toolchain; no claim is
+  made for binary identity across compiler versions.
+- Group monthly Dependabot updates for GitHub Actions and complete the
+  bilingual documentation and v3.2.1 release notes.
+
 ## 3.2.0 - 2026-08-07
 
 - Merge sparse `account/rateLimits/updated` payloads with the latest complete

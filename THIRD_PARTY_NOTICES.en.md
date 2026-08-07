@@ -10,8 +10,9 @@ Codex CLI, or IDE extension. Those files are not part of this repository and
 are not committed or redistributed in project releases. Their licenses, terms,
 and privacy policies are governed by their respective providers.
 
-GitHub Actions workflows use GitHub's `actions/*` projects and Microsoft's
-`microsoft/setup-msbuild`. They run only in CI and are not included in the
+GitHub Actions workflows use GitHub's `actions/*`, `github/codeql-action`,
+`actions/attest`, and Microsoft's `microsoft/setup-msbuild`. They run only in
+CI, are pinned to reviewed complete commit SHAs, and are not included in the
 application package.
 
 OpenAI, ChatGPT, and Codex are trademarks of their respective owners. This

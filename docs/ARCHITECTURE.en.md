@@ -14,6 +14,7 @@ Codex App / CLI / IDE / WSL
             ▼
    CodexAppServerClient
             │
+            ├─ account/read ─────────────────► field minimization
             ├─ account/rateLimits/updated ──► sparse merge
             └─ account/rateLimits/read ─────► 5-second safety poll
             │
@@ -65,6 +66,12 @@ sparse: fields such as window duration and reset time may be absent. Codex
 Orbit recursively merges non-null notification fields into the latest complete
 response before parsing it.
 
+The upstream `account/read` response can contain an email address. Immediately
+after deserialization and before caching, the client rebuilds a minimal
+response containing only `requiresOpenaiAuth`, `account.type`, and
+`account.planType`. Email and other unrelated fields never enter the account
+cache.
+
 A five-second timer acts as a safety poll. Failed live reads use a 15-second
 retry backoff. The most recent live snapshot can remain visible as explicitly
 non-live for up to 30 seconds to avoid flicker.
@@ -83,6 +90,9 @@ history.
 - Verify copied runtime-cache files with SHA-256.
 - Keep runtime cache cleanup inside `%LOCALAPPDATA%\CodexQuota\runtime`.
 - Replace settings through a temporary file and validate values before use.
+- Keep unhandled-error diagnostics in a local, size-bounded `error.log`; redact
+  user directories and common token/API-key formats before writing, and never
+  upload the file.
 - Do not bundle user data, runtime caches, PDBs, or build paths in releases.
 
 The App Server interface is an evolving upstream dependency. Deterministic

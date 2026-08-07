@@ -14,6 +14,7 @@ Codex App / CLI / IDE / WSL
             ▼
    CodexAppServerClient
             │
+            ├─ account/read ─────────────────► 账户字段最小化
             ├─ account/rateLimits/updated ──► 稀疏合并
             └─ account/rateLimits/read ─────► 5 秒安全轮询
             │
@@ -58,6 +59,10 @@ Codex App / CLI / IDE / WSL
 合并到最近完整响应，再生成新快照。通知缺失时每 5 秒读取一次额度；实时读取
 失败后退避 15 秒，连续短暂失败时保留最近 30 秒快照并明确标注非实时。
 
+`account/read` 的上游响应可能包含邮箱。客户端在反序列化之后、缓存之前立即重建
+最小响应，只保留 `requiresOpenaiAuth`、`account.type` 和
+`account.planType`；邮箱及其他无关字段不会进入账户缓存。
+
 全部实时来源不可用时，本地解析器只扫描会话日志尾部的 `rate_limits` 记录。
 此时 UI 必须明确标注“非实时”，且不会根据旧快照发送低额度或重置通知。
 
@@ -69,5 +74,8 @@ Codex App / CLI / IDE / WSL
 - 缓存的 Windows App 运行时使用 SHA-256 验证复制完整性。
 - 用户设置使用临时文件替换，且不创建额外备份。
 - 用户设置在应用前会经过白名单与数值范围校验。
+- 未处理异常只写入受长度和容量限制的本地 `error.log`；写入前脱敏用户目录与
+  常见 Token/API Key 格式，且不上传。
+- 发布包不得包含用户数据、运行时缓存、PDB 或构建机器绝对路径。
 
 App Server 是仍在演进的上游接口。每次兼容层改动必须同步更新确定性协议夹具。

@@ -26,3 +26,15 @@ Reports may be written in English or Simplified Chinese.
 Include the Codex Orbit version, Windows version, runtime type, visible status
 message, and minimal steps. Do not include tokens, API keys, cookies, complete
 session logs, real account screenshots, or unredacted user paths.
+
+After an unhandled error, diagnostics may be available at:
+
+```text
+%LOCALAPPDATA%\CodexQuota\error.log
+```
+
+The application bounds its size and redacts common path and secret formats,
+but cannot guarantee removal of every personal or application-specific
+context. Never upload the complete file without review. Share only the minimum
+relevant excerpt after manually removing prompts, account details, and other
+identifying content.

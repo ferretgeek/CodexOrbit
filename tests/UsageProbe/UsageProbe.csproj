@@ -11,6 +11,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition=" '$(CI)' == 'true' ">true</ContinuousIntegrationBuild>
+    <PathMap>$(MSBuildProjectDirectory)=/_/UsageProbe</PathMap>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>

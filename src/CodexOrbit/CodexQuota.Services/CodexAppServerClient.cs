@@ -269,6 +269,7 @@ internal sealed class CodexAppServerClient : IDisposable
 				}, accountTimeout);
 				if (HasResult(account))
 				{
+					account = MinimizeAccountResponse(account);
 					SetCachedAccount(runtime?.Key, account);
 				}
 			}
@@ -1125,8 +1126,46 @@ internal sealed class CodexAppServerClient : IDisposable
 		lock (_accountCacheLock)
 		{
 			_cachedAccountRuntimeKey = runtimeKey;
-			_cachedAccountResponse = response;
+			_cachedAccountResponse = MinimizeAccountResponse(response);
 		}
+	}
+
+	private static IDictionary<string, object> MinimizeAccountResponse(IDictionary<string, object> response)
+	{
+		IDictionary<string, object> result = GetDictionary(response, "result");
+		if (result == null)
+		{
+			return null;
+		}
+		Dictionary<string, object> minimizedResult = new Dictionary<string, object>(StringComparer.Ordinal);
+		if (result.TryGetValue("requiresOpenaiAuth", out var requiresOpenaiAuth))
+		{
+			minimizedResult["requiresOpenaiAuth"] = requiresOpenaiAuth;
+		}
+		if (result.TryGetValue("account", out var accountValue))
+		{
+			if (accountValue is IDictionary<string, object> account)
+			{
+				Dictionary<string, object> minimizedAccount = new Dictionary<string, object>(StringComparer.Ordinal);
+				if (account.TryGetValue("type", out var accountType))
+				{
+					minimizedAccount["type"] = accountType;
+				}
+				if (account.TryGetValue("planType", out var planType))
+				{
+					minimizedAccount["planType"] = planType;
+				}
+				minimizedResult["account"] = minimizedAccount;
+			}
+			else
+			{
+				minimizedResult["account"] = null;
+			}
+		}
+		return new Dictionary<string, object>(StringComparer.Ordinal)
+		{
+			{ "result", minimizedResult }
+		};
 	}
 
 	private void ClearCachedAccount()

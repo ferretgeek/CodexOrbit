@@ -43,6 +43,71 @@ function Assert-ArtifactPath {
     }
 }
 
+function New-DeterministicArchive {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDirectory,
+
+        [Parameter(Mandatory = $true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory = $true)]
+        [DateTimeOffset]$Timestamp
+    )
+
+    Add-Type -AssemblyName System.IO.Compression
+    $sourceParent = [System.IO.Directory]::GetParent($SourceDirectory).FullName
+    $archiveStream = [System.IO.File]::Open(
+        $DestinationPath,
+        [System.IO.FileMode]::CreateNew,
+        [System.IO.FileAccess]::Write,
+        [System.IO.FileShare]::None
+    )
+    try {
+        $zipArchive = [System.IO.Compression.ZipArchive]::new(
+            $archiveStream,
+            [System.IO.Compression.ZipArchiveMode]::Create,
+            $false,
+            [System.Text.UTF8Encoding]::new($false)
+        )
+        try {
+            $files = [System.Collections.Generic.List[string]]::new()
+            foreach ($file in Get-ChildItem -LiteralPath $SourceDirectory -Recurse -File) {
+                $files.Add($file.FullName)
+            }
+            $files.Sort([StringComparer]::Ordinal)
+            foreach ($filePath in $files) {
+                $entryName = $filePath.Substring(
+                    $sourceParent.Length + 1
+                ).Replace(
+                    [System.IO.Path]::DirectorySeparatorChar,
+                    '/'
+                )
+                $entry = $zipArchive.CreateEntry(
+                    $entryName,
+                    [System.IO.Compression.CompressionLevel]::Optimal
+                )
+                $entry.LastWriteTime = $Timestamp
+                $inputStream = [System.IO.File]::OpenRead($filePath)
+                $outputStream = $entry.Open()
+                try {
+                    $inputStream.CopyTo($outputStream)
+                }
+                finally {
+                    $outputStream.Dispose()
+                    $inputStream.Dispose()
+                }
+            }
+        }
+        finally {
+            $zipArchive.Dispose()
+        }
+    }
+    finally {
+        $archiveStream.Dispose()
+    }
+}
+
 [System.IO.Directory]::CreateDirectory($artifactRoot) | Out-Null
 Assert-ArtifactPath -Path $staging
 Assert-ArtifactPath -Path $archive
@@ -105,7 +170,24 @@ $hash = Get-FileHash -LiteralPath (Join-Path $staging 'CodexOrbit.exe') -Algorit
     [System.Text.UTF8Encoding]::new($false)
 )
 
-Compress-Archive -LiteralPath $staging -DestinationPath $archive -CompressionLevel Optimal
+$sourceDate = [DateTimeOffset]::Parse(
+    (& git -C $repoRoot log -1 --format=%cI).Trim(),
+    [System.Globalization.CultureInfo]::InvariantCulture
+)
+$sourceDate = $sourceDate.ToUniversalTime()
+$sourceDate = [DateTimeOffset]::new(
+    $sourceDate.Year,
+    $sourceDate.Month,
+    $sourceDate.Day,
+    $sourceDate.Hour,
+    $sourceDate.Minute,
+    $sourceDate.Second - ($sourceDate.Second % 2),
+    [TimeSpan]::Zero
+)
+New-DeterministicArchive `
+    -SourceDirectory $staging `
+    -DestinationPath $archive `
+    -Timestamp $sourceDate
 Copy-Item -LiteralPath $exe -Destination $releaseExe
 
 $releaseExeHash = Get-FileHash -LiteralPath $releaseExe -Algorithm SHA256

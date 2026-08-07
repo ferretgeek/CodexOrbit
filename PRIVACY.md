@@ -16,7 +16,10 @@ Codex Orbit 的设计目标是本地优先、最小读取和零遥测。
 
 程序在本机启动 `codex app-server`，通过重定向的标准输入/输出交换 JSONL
 消息。Codex 运行时负责身份验证、Token 刷新以及与 OpenAI 服务的通信。
-Codex Orbit 只请求账户类型和额度窗口，并只在内存中保留当前快照。
+Codex Orbit 请求协议要求的账户状态和额度窗口。当前 `account/read` 响应可能
+包含账户邮箱；程序在 JSON 反序列化后立即丢弃邮箱及其他无关账户字段，只在内存
+中保留认证要求、账户类型和套餐类型。邮箱不会被读取用于业务逻辑、写入磁盘或
+写入诊断日志。
 
 Codex Orbit 不传入 `--analytics-default-enabled`。App Server 自身的分析设置由用户
 安装的 Codex 运行时及其配置控制，具体以上游 Codex 官方文档为准。
@@ -65,6 +68,18 @@ HKCU\Software\Microsoft\Windows\CurrentVersion\Run\CodexOrbit
 ```
 
 该目录只包含 Codex 可执行运行时，不包含会话、设置或账户凭据。
+
+发生未处理错误时，程序可能创建：
+
+```text
+%LOCALAPPDATA%\CodexQuota\error.log
+```
+
+该文件只保存在本机，不会自动上传。单条诊断最多约 32 KiB；文件超过约
+512 KiB 后会在下次写入前轮换。程序会脱敏 `%USERPROFILE%`、
+`%LOCALAPPDATA%` 的实际路径，以及常见 GitHub Token 和 API Key 格式。
+诊断仍可能包含异常消息或调用上下文，分享前必须人工检查并删除提示词、账户信息
+或其他可识别个人身份的内容。
 
 ## 删除本地数据
 

@@ -18,8 +18,12 @@ telemetry.
 Codex Orbit starts a local `codex app-server` child process and exchanges JSONL
 messages over redirected standard input and output. The installed Codex runtime
 handles authentication, token refresh, and communication with OpenAI services.
-Codex Orbit requests only the account type and quota windows and retains the
-current snapshot in memory.
+Codex Orbit requests the account state and quota windows required by the
+protocol. The current `account/read` response can contain the account email.
+Immediately after JSON deserialization, the application discards the email and
+all other unrelated account fields, retaining only the authentication
+requirement, account type, and plan type in memory. The email is never used by
+application logic, persisted, or written to diagnostics.
 
 Codex Orbit does not pass `--analytics-default-enabled`. App Server analytics
 are controlled by the installed Codex runtime and the user's Codex
@@ -74,6 +78,20 @@ package, it is copied to:
 
 That directory contains only Codex runtime executables copied from the user's
 existing installation.
+
+After an unhandled error, the application may create:
+
+```text
+%LOCALAPPDATA%\CodexQuota\error.log
+```
+
+This file remains local and is never uploaded automatically. Each diagnostic
+entry is limited to approximately 32 KiB, and a file over approximately
+512 KiB is rotated before the next write. The application redacts the actual
+`%USERPROFILE%` and `%LOCALAPPDATA%` paths as well as common GitHub-token and
+API-key formats. Exception messages and call context can still contain
+identifying information, so manually review and remove prompts, account
+details, and other personal context before sharing.
 
 ## Delete local data
 

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -12,6 +13,8 @@ namespace CodexQuota;
 public partial class App : Application
 {
 	private const string RevealSignalName = "CodexOrbit.Wpf.Reveal";
+
+	private const int MaximumDiagnosticLength = 32768;
 
 	private Mutex _singleInstance;
 
@@ -180,10 +183,40 @@ public partial class App : Application
 				{
 				}
 			}
-			File.AppendAllText(text, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + exception?.ToString() + Environment.NewLine, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+			File.AppendAllText(text, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " " + SanitizeDiagnostic(exception.ToString()) + Environment.NewLine, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
 		}
 		catch
 		{
 		}
+	}
+
+	internal static string SanitizeDiagnostic(string diagnostic)
+	{
+		string value = diagnostic ?? "";
+		value = ReplacePath(value, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "%LOCALAPPDATA%");
+		value = ReplacePath(value, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "%USERPROFILE%");
+		value = Regex.Replace(value, @"github_pat_[A-Za-z0-9_]{16,}", "[REDACTED_GITHUB_TOKEN]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		value = Regex.Replace(value, @"gh[pousr]_[A-Za-z0-9_]{16,}", "[REDACTED_GITHUB_TOKEN]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		value = Regex.Replace(value, @"sk-[A-Za-z0-9_-]{16,}", "[REDACTED_API_KEY]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		if (value.Length > MaximumDiagnosticLength)
+		{
+			value = value.Substring(0, MaximumDiagnosticLength) + Environment.NewLine + "[DIAGNOSTIC_TRUNCATED]";
+		}
+		return value;
+	}
+
+	private static string ReplacePath(string value, string path, string replacement)
+	{
+		if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(path))
+		{
+			return value;
+		}
+		int index = value.IndexOf(path, StringComparison.OrdinalIgnoreCase);
+		while (index >= 0)
+		{
+			value = value.Substring(0, index) + replacement + value.Substring(index + path.Length);
+			index = value.IndexOf(path, index + replacement.Length, StringComparison.OrdinalIgnoreCase);
+		}
+		return value;
 	}
 }

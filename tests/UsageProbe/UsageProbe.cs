@@ -136,6 +136,11 @@ internal static class UsageProbe
 					Console.Error.WriteLine("Fake initial rate-limit snapshot was not read.");
 					return 20;
 				}
+				if (!CachedAccountIsMinimized(reader))
+				{
+					Console.Error.WriteLine("Account response retained fields that are not required by the widget.");
+					return 22;
+				}
 				Stopwatch stopwatch = Stopwatch.StartNew();
 				if (!updated.Wait(5000))
 				{
@@ -235,6 +240,25 @@ internal static class UsageProbe
 			Console.Error.WriteLine("Plan mapping regression.");
 			return 33;
 		}
+		if (PlanInfo.ResolveKind("self_serve_business_prolite", "auto") != PlanKind.Business || PlanInfo.ResolveKind("self_serve_business_usage_based", "auto") != PlanKind.Business || PlanInfo.ResolveKind("enterprise_cbp_automation", "auto") != PlanKind.Enterprise || PlanInfo.ResolveKind("edu", "auto") != PlanKind.Enterprise)
+		{
+			Console.Error.WriteLine("Current App Server plan mapping regression.");
+			return 36;
+		}
+
+		Type appType = typeof(CodexUsageReader).Assembly.GetType("CodexQuota.App");
+		MethodInfo sanitizeDiagnostic = appType?.GetMethod("SanitizeDiagnostic", BindingFlags.Static | BindingFlags.NonPublic);
+		string fakeToken = "github" + "_pat_" + new string('A', 24);
+		string fakeApiKey = "sk-" + new string('B', 24);
+		string privatePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "private", "trace.txt");
+		string privateLocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "private", "trace.txt");
+		string sanitized = (string)sanitizeDiagnostic?.Invoke(null, new object[] { privatePath + " " + privateLocalPath + " " + fakeToken + " " + fakeApiKey });
+		string truncated = (string)sanitizeDiagnostic?.Invoke(null, new object[] { new string('X', 40000) });
+		if (string.IsNullOrWhiteSpace(sanitized) || sanitized.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), StringComparison.OrdinalIgnoreCase) >= 0 || sanitized.IndexOf(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), StringComparison.OrdinalIgnoreCase) >= 0 || sanitized.Contains(fakeToken) || sanitized.Contains(fakeApiKey) || !sanitized.Contains("%USERPROFILE%") || !sanitized.Contains("%LOCALAPPDATA%") || !sanitized.Contains("[REDACTED_GITHUB_TOKEN]") || !sanitized.Contains("[REDACTED_API_KEY]") || string.IsNullOrWhiteSpace(truncated) || !truncated.EndsWith("[DIAGNOSTIC_TRUNCATED]", StringComparison.Ordinal) || truncated.Length > 32800)
+		{
+			Console.Error.WriteLine("Diagnostic redaction regression.");
+			return 37;
+		}
 
 		long tracked = observedAt.AddHours(1.0).UtcTicks;
 		long notified = 0L;
@@ -261,6 +285,38 @@ internal static class UsageProbe
 
 		Console.WriteLine("PASS|pure");
 		return 0;
+	}
+
+	private static bool CachedAccountIsMinimized(CodexUsageReader reader)
+	{
+		FieldInfo appServerField = typeof(CodexUsageReader).GetField("_appServer", BindingFlags.Instance | BindingFlags.NonPublic);
+		object appServer = appServerField?.GetValue(reader);
+		FieldInfo accountField = appServer?.GetType().GetField("_cachedAccountResponse", BindingFlags.Instance | BindingFlags.NonPublic);
+		if (!(accountField?.GetValue(appServer) is IDictionary<string, object> response) || ContainsKey(response, "email"))
+		{
+			return false;
+		}
+		if (!(response.TryGetValue("result", out var resultValue) && resultValue is IDictionary<string, object> result && result.TryGetValue("account", out var accountValue) && accountValue is IDictionary<string, object> account))
+		{
+			return false;
+		}
+		return string.Equals(Convert.ToString(account["type"], CultureInfo.InvariantCulture), "chatgpt", StringComparison.Ordinal) && string.Equals(Convert.ToString(account["planType"], CultureInfo.InvariantCulture), "pro", StringComparison.Ordinal) && account.Count == 2 && result.Count == 2 && result.ContainsKey("requiresOpenaiAuth");
+	}
+
+	private static bool ContainsKey(object value, string key)
+	{
+		if (!(value is IDictionary<string, object> dictionary))
+		{
+			return false;
+		}
+		foreach (KeyValuePair<string, object> item in dictionary)
+		{
+			if (string.Equals(item.Key, key, StringComparison.OrdinalIgnoreCase) || ContainsKey(item.Value, key))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static int RunFakeAppServer()
@@ -321,12 +377,15 @@ internal static class UsageProbe
 						"result",
 						new Dictionary<string, object>
 						{
+							{ "requiresOpenaiAuth", true },
+							{ "unusedMetadata", "discard-me" },
 							{
 								"account",
 								new Dictionary<string, object>
 								{
 									{ "type", "chatgpt" },
-									{ "planType", "pro" }
+									{ "planType", "pro" },
+									{ "email", "private@example.invalid" }
 								}
 							}
 						}

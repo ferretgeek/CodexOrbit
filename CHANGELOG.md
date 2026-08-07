@@ -4,6 +4,24 @@
 
 本项目遵循语义化版本思路，但在 1.0 前后均可能因上游 Codex 协议变化调整兼容层。
 
+## 3.2.1 - 2026-08-08
+
+- `account/read` 反序列化后立即丢弃邮箱及无关账户字段，缓存只保留认证要求、
+  账户类型和套餐类型。
+- 本地 `error.log` 新增用户路径与常见密钥格式脱敏、单条长度上限和文件轮换，
+  并在双语隐私与支持文档中公开其范围。
+- 扩充当前 Schema 中 Business 与 Enterprise 套餐标识测试，并验证账户缓存
+  最小化与诊断脱敏。
+- Build 工作流只在 `main` 的 push/PR 运行，消除同一 PR 分支 push 与 PR 事件
+  造成的重复构建和失败邮件。
+- GitHub Actions 固定到完整提交 SHA，CI 固定为 Windows Server 2022 和
+  Visual Studio 2022 工具链范围。
+- 增加 C# CodeQL `security-extended` 扫描和 GitHub Release 构建来源证明。
+- ZIP 使用稳定文件顺序和提交时间戳，确保相同源码、内容与工具链下打包结果稳定；
+  不再宣称跨编译器版本二进制必然一致。
+- Dependabot 的 GitHub Actions 更新按月合并为一个分组，并补齐全部中英双语
+  文档与 v3.2.1 Release Notes。
+
 ## 3.2.0 - 2026-08-07
 
 - 按当前 App Server Schema 合并稀疏的 `account/rateLimits/updated` 通知。

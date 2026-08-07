@@ -37,6 +37,10 @@ in CI or appear in screenshots and logs.
    account screenshots.
 6. Update both Chinese and English documentation for user-visible changes.
 7. Add a changelog entry for behavior changes.
+8. Keep real email addresses out of protocol fixtures and verify that account
+   responses retain only required fields.
+9. Pin GitHub Actions to complete commit SHAs and require both `build` and
+   `codeql` checks to pass.
 
 ## UI previews
 
@@ -70,7 +74,10 @@ Never put credentials in these variables, documentation, or bug reports.
 
 Keep the project free of telemetry, direct credential storage, and unnecessary
 third-party dependencies. Protocol changes must include deterministic coverage
-so contributors do not need a real account to verify them.
+so contributors do not need a real account to verify them. Keep package entry
+ordering and timestamps deterministic. Compare binary output only with the same
+source and compiler toolchain; do not claim equivalence across compiler
+versions.
 
 By participating, you agree to follow the
 [Code of Conduct](CODE_OF_CONDUCT.en.md).

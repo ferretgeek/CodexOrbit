@@ -27,7 +27,13 @@
 
 - Codex Orbit 不应读取 Codex 凭据文件。
 - 与 `codex app-server` 的通信应保持在本机标准输入/输出。
+- `account/read` 返回后应立即丢弃邮箱及无关账户字段，只缓存认证要求、账户类型
+  和套餐类型。
+- 本地诊断应限制单条与文件大小，并在写入前脱敏用户路径及常见密钥格式。
 - 发布包不得包含缓存运行时、用户设置、会话日志或构建机器路径。
 - GitHub Release 的 EXE 与 ZIP 应同时发布 SHA-256。
+- v3.2.1 起的 Release 资产还应具有 GitHub 构建来源证明；这不等同于商业
+  Authenticode 代码签名。
+- CI 中使用的 Actions 固定到完整提交 SHA，并运行 CodeQL C# 扫描。
 
 依赖上游 Codex 协议造成的兼容性问题不一定是安全漏洞，但欢迎报告。
