@@ -277,8 +277,9 @@ internal static class UsageProbe
 			{
 				message = json.DeserializeObject(line) as IDictionary<string, object>;
 			}
-			catch
+			catch (Exception exception)
 			{
+				Console.Error.WriteLine("FAKE_SERVER_PARSE|" + exception.GetType().Name);
 				continue;
 			}
 			if (message == null || !message.TryGetValue("method", out var methodValue))
@@ -286,6 +287,7 @@ internal static class UsageProbe
 				continue;
 			}
 			string method = Convert.ToString(methodValue, CultureInfo.InvariantCulture);
+			Console.Error.WriteLine("FAKE_SERVER_METHOD|" + method);
 			if (!message.TryGetValue("id", out var id))
 			{
 				continue;
@@ -297,6 +299,7 @@ internal static class UsageProbe
 					{ "id", id },
 					{ "result", new Dictionary<string, object> { { "userAgent", "codex-orbit-test/1" } } }
 				});
+				Console.Error.WriteLine("FAKE_SERVER_REPLY|initialize");
 			}
 			else if (string.Equals(method, "account/read", StringComparison.Ordinal))
 			{
