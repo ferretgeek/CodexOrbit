@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Web.Script.Serialization;
 using CodexQuota.Models;
@@ -261,9 +262,11 @@ internal static class UsageProbe
 		JavaScriptSerializer json = new JavaScriptSerializer();
 		bool notificationQueued = false;
 		Console.Error.WriteLine("FAKE_SERVER_READY");
+		using StreamReader input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: false);
 		string line;
-		while ((line = Console.ReadLine()) != null)
+		while ((line = input.ReadLine()) != null)
 		{
+			Console.Error.WriteLine("FAKE_SERVER_INPUT");
 			IDictionary<string, object> message;
 			try
 			{

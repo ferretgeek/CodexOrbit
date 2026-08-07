@@ -370,8 +370,10 @@ internal sealed class CodexAppServerClient : IDisposable
 			}
 			_process = process;
 			_activeRuntime = runtime;
-			_input = process.StandardInput;
-			_input.AutoFlush = true;
+			_input = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
+			{
+				AutoFlush = true
+			};
 			_readerThread = new Thread((ThreadStart)delegate
 			{
 				ReadOutputLoop(process);
