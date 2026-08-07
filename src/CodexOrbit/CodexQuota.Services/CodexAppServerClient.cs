@@ -701,7 +701,7 @@ internal sealed class CodexAppServerClient : IDisposable
 			}
 			for (int i = overrideStartIndex; i < candidates.Count; i++)
 			{
-				candidates[i].StartupTimeoutMilliseconds = 8000;
+				candidates[i].StartupTimeoutMilliseconds = 11000;
 			}
 		}
 		if (string.Equals(onlyRuntime, "override", StringComparison.Ordinal))

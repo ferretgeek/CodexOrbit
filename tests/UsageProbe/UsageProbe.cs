@@ -260,6 +260,7 @@ internal static class UsageProbe
 	{
 		JavaScriptSerializer json = new JavaScriptSerializer();
 		bool notificationQueued = false;
+		Console.Error.WriteLine("FAKE_SERVER_READY");
 		string line;
 		while ((line = Console.ReadLine()) != null)
 		{
