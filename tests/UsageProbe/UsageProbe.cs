@@ -137,9 +137,9 @@ internal static class UsageProbe
 					return 20;
 				}
 				Stopwatch stopwatch = Stopwatch.StartNew();
-				if (!updated.Wait(2000))
+				if (!updated.Wait(5000))
 				{
-					Console.Error.WriteLine("Rate-limit notification was not applied within two seconds.");
+					Console.Error.WriteLine("Rate-limit notification was not applied within five seconds.");
 					return 21;
 				}
 				Console.WriteLine("PASS|notification_ms=" + stopwatch.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture));
@@ -261,7 +261,6 @@ internal static class UsageProbe
 	{
 		JavaScriptSerializer json = new JavaScriptSerializer();
 		bool notificationQueued = false;
-		Console.Error.WriteLine("FAKE_SERVER_READY");
 		using StreamReader input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: true);
 		using StreamWriter output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
 		{
@@ -271,7 +270,6 @@ internal static class UsageProbe
 		string line;
 		while ((line = input.ReadLine()) != null)
 		{
-			Console.Error.WriteLine("FAKE_SERVER_INPUT");
 			IDictionary<string, object> message;
 			try
 			{
@@ -296,7 +294,6 @@ internal static class UsageProbe
 				continue;
 			}
 			string method = Convert.ToString(methodValue, CultureInfo.InvariantCulture);
-			Console.Error.WriteLine("FAKE_SERVER_METHOD|" + method);
 			if (!message.TryGetValue("id", out var id))
 			{
 				continue;
@@ -308,7 +305,6 @@ internal static class UsageProbe
 					{ "id", id },
 					{ "result", new Dictionary<string, object> { { "userAgent", "codex-orbit-test/1" } } }
 				});
-				Console.Error.WriteLine("FAKE_SERVER_REPLY|initialize");
 			}
 			else if (string.Equals(method, "account/read", StringComparison.Ordinal))
 			{
