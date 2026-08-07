@@ -363,17 +363,15 @@ internal sealed class CodexAppServerClient : IDisposable
 				StartInfo = startInfo,
 				EnableRaisingEvents = true
 			};
-			if (!process.Start())
+			if (!StartWithBomlessUtf8Input(process))
 			{
 				process.Dispose();
 				return false;
 			}
 			_process = process;
 			_activeRuntime = runtime;
-			_input = new StreamWriter(process.StandardInput.BaseStream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
-			{
-				AutoFlush = true
-			};
+			_input = process.StandardInput;
+			_input.AutoFlush = true;
 			_readerThread = new Thread((ThreadStart)delegate
 			{
 				ReadOutputLoop(process);
@@ -434,6 +432,38 @@ internal sealed class CodexAppServerClient : IDisposable
 			LastFailure = runtime.DisplayName + " 无法启动";
 			StopProcessNoLock();
 			return false;
+		}
+	}
+
+	private static bool StartWithBomlessUtf8Input(Process process)
+	{
+		Encoding previous = null;
+		bool changed = false;
+		try
+		{
+			try
+			{
+				previous = Console.InputEncoding;
+				Console.InputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+				changed = true;
+			}
+			catch (IOException)
+			{
+			}
+			return process.Start();
+		}
+		finally
+		{
+			if (changed)
+			{
+				try
+				{
+					Console.InputEncoding = previous;
+				}
+				catch (IOException)
+				{
+				}
+			}
 		}
 	}
 

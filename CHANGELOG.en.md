@@ -15,6 +15,8 @@ changes.
 - Restore a docked mini window to the monitor where it was last positioned.
 - Add a 15-second retry backoff after live-service failures while retaining
   the existing 30-second snapshot grace period.
+- Pin App Server input to BOM-less UTF-8 so inherited hosted-console encodings
+  cannot corrupt the first JSONL message.
 - Validate persisted settings before applying them.
 - Make shutdown and background refresh callbacks race-safe.
 - Extend deterministic coverage for sparse notifications, local-log parsing,

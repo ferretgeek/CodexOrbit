@@ -262,7 +262,7 @@ internal static class UsageProbe
 		JavaScriptSerializer json = new JavaScriptSerializer();
 		bool notificationQueued = false;
 		Console.Error.WriteLine("FAKE_SERVER_READY");
-		using StreamReader input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: false);
+		using StreamReader input = new StreamReader(Console.OpenStandardInput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false), detectEncodingFromByteOrderMarks: true);
 		using StreamWriter output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
 		{
 			AutoFlush = true
