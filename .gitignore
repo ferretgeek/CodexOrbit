@@ -1,0 +1,40 @@
+# Visual Studio / MSBuild
+.vs/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Tt]est[Rr]esults/
+artifacts/
+publish/
+*.user
+*.suo
+*.cache
+*.pdb
+*.exe
+*.zip
+
+# Local runtime and diagnostics
+*.log
+*.bak
+*.old
+*.tmp
+*.dmp
+settings.json
+auth.json
+rollout-*.jsonl
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

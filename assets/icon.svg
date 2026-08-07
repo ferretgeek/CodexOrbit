@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Codex Orbit icon">
+  <circle cx="128" cy="128" r="108" fill="#081021"/>
+  <circle
+    cx="128"
+    cy="128"
+    r="76"
+    fill="none"
+    stroke="#1DDFD3"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-dasharray="300 178"
+    transform="rotate(-82 128 128)"
+  />
+  <circle
+    cx="128"
+    cy="128"
+    r="76"
+    fill="none"
+    stroke="#7B5CFF"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-dasharray="135 343"
+    transform="rotate(158 128 128)"
+  />
+  <circle cx="128" cy="128" r="10" fill="#E7F9FF"/>
+</svg>

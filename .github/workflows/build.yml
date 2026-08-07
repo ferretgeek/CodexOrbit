@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v3
+        with:
+          msbuild-architecture: x64
+
+      - name: Build and test
+        shell: pwsh
+        run: ./scripts/test.ps1
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v6
+        with:
+          name: CodexOrbit-windows-x64
+          path: src/CodexOrbit/bin/x64/Release/CodexOrbit.exe
+          if-no-files-found: error

@@ -1,0 +1,43 @@
+name: "功能建议 / Feature request"
+description: "提出产品或体验改进 / Suggest a product or UX improvement"
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请先描述要解决的问题，再说明建议方案。中文或英文均可。
+        Start with the problem, then describe the proposed solution. Chinese or English is welcome.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "问题 / Problem"
+      description: "当前体验在哪个场景不够好？ / What scenario is underserved today?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "建议方案 / Proposed solution"
+      description: "说明用户流程和期望结果。 / Describe the user flow and desired outcome."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "备选方案 / Alternatives"
+      description: "你考虑过哪些替代方式？ / What alternatives did you consider?"
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: "边界确认 / Boundaries"
+      options:
+        - label: "建议不要求读取或保存 Codex 凭据。 / This does not require reading or storing Codex credentials."
+          required: true
+        - label: "建议不会绕过任何额度或计费限制。 / This does not bypass usage or billing limits."
+          required: true

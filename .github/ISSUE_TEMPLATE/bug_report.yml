@@ -1,0 +1,83 @@
+name: "缺陷报告 / Bug report"
+description: "报告可复现的问题 / Report a reproducible problem"
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请勿提交 Token、API Key、Cookie、完整会话日志或真实账户截图。
+        Thanks for the report. Never submit tokens, API keys, cookies, complete session logs, or real account screenshots.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "提交前确认 / Pre-flight"
+      options:
+        - label: "我使用的是最新 Release。 / I am using the latest release."
+          required: true
+        - label: "我已阅读 README 的故障排查。 / I checked the README troubleshooting guide."
+          required: true
+        - label: "内容已脱敏。 / All content is redacted."
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: "Codex Orbit 版本 / Version"
+      placeholder: "3.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: "Windows 版本 / Windows version"
+      placeholder: "Windows 11 24H2 x64"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: "Codex 运行时 / Codex runtime"
+      options:
+        - "Windows App"
+        - "Codex CLI"
+        - "IDE extension / IDE 扩展"
+        - "WSL"
+        - "Multiple or unknown / 多个或不确定"
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: "问题与预期 / Actual and expected behavior"
+      description: "说明实际发生了什么，以及你期望什么。 / Describe what happened and what you expected."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "最小复现步骤 / Minimal reproduction"
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: status
+    attributes:
+      label: "已脱敏的状态文案 / Redacted status text"
+      description: "只粘贴界面状态文案，不粘贴会话日志。 / Paste only visible status text, not session logs."
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: "补充信息 / Additional context"
+      description: "可使用预览数据截图。 / Screenshots are welcome only when they contain demo or fully redacted data."
