@@ -339,17 +339,9 @@ internal static class UsageProbe
 				if (!notificationQueued)
 				{
 					notificationQueued = true;
-					Thread thread = new Thread((ThreadStart)delegate
-					{
-						Thread.Sleep(250);
-						Console.Error.WriteLine("FAKE_SERVER_NOTIFY|before");
-						WriteFake(json, CreateFakeRateNotification(30.0));
-						Console.Error.WriteLine("FAKE_SERVER_NOTIFY|after");
-					})
-					{
-						IsBackground = true
-					};
-					thread.Start();
+					Console.Error.WriteLine("FAKE_SERVER_NOTIFY|before");
+					WriteFake(json, CreateFakeRateNotification(30.0));
+					Console.Error.WriteLine("FAKE_SERVER_NOTIFY|after");
 				}
 			}
 		}
