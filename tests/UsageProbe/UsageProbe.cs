@@ -279,7 +279,16 @@ internal static class UsageProbe
 			}
 			catch (Exception exception)
 			{
-				Console.Error.WriteLine("FAKE_SERVER_PARSE|" + exception.GetType().Name);
+				StringBuilder prefix = new StringBuilder();
+				for (int i = 0; i < Math.Min(12, line.Length); i++)
+				{
+					if (i > 0)
+					{
+						prefix.Append(',');
+					}
+					prefix.Append(((int)line[i]).ToString("X4", CultureInfo.InvariantCulture));
+				}
+				Console.Error.WriteLine("FAKE_SERVER_PARSE|" + exception.GetType().Name + "|length=" + line.Length.ToString(CultureInfo.InvariantCulture) + "|prefix=" + prefix);
 				continue;
 			}
 			if (message == null || !message.TryGetValue("method", out var methodValue))
