@@ -13,7 +13,7 @@ net, and can fall back to recent local session snapshots.
 > ChatGPT-plan Codex quota—not OpenAI API billing or API rate limits—and never
 > bypasses usage limits.
 
-![Codex Orbit mini and ring previews](assets/screenshots/overview-midnight.png)
+[![Codex Orbit product preview](assets/social-preview.png)](../../releases/latest)
 
 ## Highlights
 

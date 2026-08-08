@@ -11,7 +11,7 @@ Codex Orbit 是一个轻量的 Windows 桌面额度悬浮窗。它通过本机 C
 > 它显示的是 Codex 的 ChatGPT 套餐额度，不是 OpenAI API 的余额或 API
 > rate limit，也不会绕过任何额度限制。
 
-![Codex Orbit 迷你窗与圆环预览](assets/screenshots/overview-midnight.png)
+[![Codex Orbit 产品预览](assets/social-preview.png)](../../releases/latest)
 
 ## 功能
 
