@@ -218,6 +218,7 @@ codex --version
 | 安全 | [SECURITY.md](SECURITY.md) | [SECURITY.en.md](SECURITY.en.md) |
 | 支持 | [SUPPORT.md](SUPPORT.md) | [SUPPORT.en.md](SUPPORT.en.md) |
 | 架构 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | [ARCHITECTURE.en.md](docs/ARCHITECTURE.en.md) |
+| 安装、升级与卸载 | [OPERATIONS.md](docs/OPERATIONS.md) | [OPERATIONS.en.md](docs/OPERATIONS.en.md) |
 | 发布 | [PUBLISHING.md](docs/PUBLISHING.md) | [PUBLISHING.en.md](docs/PUBLISHING.en.md) |
 | 更新记录 | [CHANGELOG.md](CHANGELOG.md) | [CHANGELOG.en.md](CHANGELOG.en.md) |
 | 行为准则 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | [CODE_OF_CONDUCT.en.md](CODE_OF_CONDUCT.en.md) |

@@ -223,6 +223,7 @@ window placement.
 | Security | [SECURITY.en.md](SECURITY.en.md) | [SECURITY.md](SECURITY.md) |
 | Support | [SUPPORT.en.md](SUPPORT.en.md) | [SUPPORT.md](SUPPORT.md) |
 | Architecture | [ARCHITECTURE.en.md](docs/ARCHITECTURE.en.md) | [ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Install, upgrade, and uninstall | [OPERATIONS.en.md](docs/OPERATIONS.en.md) | [OPERATIONS.md](docs/OPERATIONS.md) |
 | Publishing | [PUBLISHING.en.md](docs/PUBLISHING.en.md) | [PUBLISHING.md](docs/PUBLISHING.md) |
 | Changelog | [CHANGELOG.en.md](CHANGELOG.en.md) | [CHANGELOG.md](CHANGELOG.md) |
 | Conduct | [CODE_OF_CONDUCT.en.md](CODE_OF_CONDUCT.en.md) | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) |

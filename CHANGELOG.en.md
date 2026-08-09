@@ -63,5 +63,8 @@ changes.
 
 ## Unreleased
 
-Record unreleased changes here, then move them into a versioned section when a
-release is prepared.
+- Add bilingual operations guidance for install, upgrade, backup, restore,
+  health checks, uninstall, and Windows/server boundaries.
+- Clarify that Codex Orbit connects to a same-machine `codex app-server` only
+  inside an interactive Windows desktop session and never republishes local
+  authentication or quota data as a remote service.
