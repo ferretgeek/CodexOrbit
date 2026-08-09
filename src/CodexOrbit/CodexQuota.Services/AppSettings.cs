@@ -201,6 +201,7 @@ public sealed class AppSettings
 		case "aurora":
 		case "mono":
 		case "sakura":
+		case "mint":
 			return theme.Trim().ToLowerInvariant();
 		default:
 			return "midnight";

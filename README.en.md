@@ -23,7 +23,7 @@ net, and can fall back to recent local session snapshots.
   extensions, installed Windows packages, and WSL.
 - No need to start App or CLI first: Codex Orbit launches a hidden local
   `codex app-server` child process when required.
-- Mini bar, resizable ring, or both; five themes, opacity, topmost,
+- Mini bar, resizable ring, or both; six global themes—including Sakura and Mint light palettes—opacity, topmost,
   click-through, edge docking, and fullscreen suppression.
 - Remaining percentage, reset countdown, plan badge, low-quota notifications,
   and quota-reset notifications.

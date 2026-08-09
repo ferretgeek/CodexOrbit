@@ -313,6 +313,42 @@ public static class ThemeManager
 				MenuText = "#241018",
 				MenuDim = "#6A3848",
 				Glow = "#D07098"
+			},
+			new ThemePalette
+			{
+				Id = "mint",
+				Name = "薄荷晨光",
+				IsLight = true,
+				Bg0 = "#F8F2FFFA",
+				Bg1 = "#F8D9F1E6",
+				RimA = "#B865B89A",
+				RimB = "#A84C8EAA",
+				Track = "#22203830",
+				ShortA = "#FF278DB4",
+				ShortB = "#FF176C8F",
+				WeekA = "#FF25936E",
+				WeekB = "#FF13694D",
+				TextHi = "#172C26",
+				TextLo = "#3F6358",
+				TextFaint = "#628075",
+				AccentShort = "#176D92",
+				AccentWeek = "#177558",
+				Ok = "#14724E",
+				Warn = "#9A6416",
+				Danger = "#B53845",
+				Surface = "#F8F7FFFB",
+				SurfaceBorder = "#9C5C9E84",
+				HandleTrack = "#30203830",
+				Hover = "#14172C26",
+				TipBg = "#FAF9FFFC",
+				TipBorder = "#9C5C9E84",
+				MenuBg = "#FCFBFFFD",
+				MenuBorder = "#8C5C9E84",
+				MenuHover = "#14172C26",
+				MenuSep = "#3C5C9E84",
+				MenuText = "#172C26",
+				MenuDim = "#4E6E64",
+				Glow = "#55A987"
 			}
 		};
 	}
