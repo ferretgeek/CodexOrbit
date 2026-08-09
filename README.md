@@ -11,7 +11,7 @@ Codex Orbit 是一个轻量的 Windows 桌面额度悬浮窗。它通过本机 C
 > 它显示的是 Codex 的 ChatGPT 套餐额度，不是 OpenAI API 的余额或 API
 > rate limit，也不会绕过任何额度限制。
 
-[![Codex Orbit 产品预览](assets/social-preview.png)](../../releases/latest)
+[![Codex Orbit 产品预览](assets/social-preview.png)](https://github.com/ferretgeek/CodexOrbit/releases/latest)
 
 ## 功能
 
@@ -51,7 +51,7 @@ Codex 的登录方式与 `app-server` 协议可参考
 
 ### 从 Release 安装
 
-1. 打开仓库的[最新 Release](../../releases/latest)。
+1. 打开仓库的[最新 Release](https://github.com/ferretgeek/CodexOrbit/releases/latest)。
 2. 下载 `CodexOrbit-<版本>-windows-x64.exe`；需要离线双语文档时下载 ZIP。
 3. 使用 `SHA256SUMS.txt` 核对下载文件。
 4. 将程序放入固定目录后双击运行。

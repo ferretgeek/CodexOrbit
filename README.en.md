@@ -13,7 +13,7 @@ net, and can fall back to recent local session snapshots.
 > ChatGPT-plan Codex quota—not OpenAI API billing or API rate limits—and never
 > bypasses usage limits.
 
-[![Codex Orbit product preview](assets/social-preview.png)](../../releases/latest)
+[![Codex Orbit product preview](assets/social-preview.png)](https://github.com/ferretgeek/CodexOrbit/releases/latest)
 
 ## Highlights
 
@@ -57,7 +57,7 @@ local-log fallback for temporary incompatibilities.
 
 ### From GitHub Releases
 
-1. Open the repository's [latest Release](../../releases/latest).
+1. Open the repository's [latest Release](https://github.com/ferretgeek/CodexOrbit/releases/latest).
 2. Download `CodexOrbit-<version>-windows-x64.exe`, or download the ZIP if you
    also want offline documentation.
 3. Verify the file with `SHA256SUMS.txt`.
