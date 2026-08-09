@@ -1,4 +1,4 @@
-# Codex Orbit
+# Codex Orbit — Codex 额度悬浮窗
 
 [English](README.en.md)
 

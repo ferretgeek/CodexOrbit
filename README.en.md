@@ -1,4 +1,4 @@
-# Codex Orbit
+# Codex Orbit — Codex Quota Widget
 
 [简体中文](README.md)
 
