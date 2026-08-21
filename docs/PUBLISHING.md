@@ -87,7 +87,7 @@ rg -n -i --hidden `
 ```powershell
 Get-FileHash .\CodexOrbit-3.2.1-windows-x64.exe -Algorithm SHA256
 gh attestation verify .\CodexOrbit-3.2.1-windows-x64.exe `
-  --repo ferretgeek/CodexOrbit
+  --repo ferretgeek/codex-quota-widget
 ```
 
 同时验证 ZIP 和 `SHA256SUMS.txt`，再在 Windows 上启动 EXE，检查托盘、迷你窗、

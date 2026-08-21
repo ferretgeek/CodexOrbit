@@ -97,7 +97,7 @@ Download fresh assets from the Release page instead of reusing local files:
 ```powershell
 Get-FileHash .\CodexOrbit-3.2.1-windows-x64.exe -Algorithm SHA256
 gh attestation verify .\CodexOrbit-3.2.1-windows-x64.exe `
-  --repo ferretgeek/CodexOrbit
+  --repo ferretgeek/codex-quota-widget
 ```
 
 Verify the ZIP and `SHA256SUMS.txt` as well, then start the EXE on Windows and
